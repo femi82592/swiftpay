@@ -153,7 +153,7 @@ function handleSignup() {
     const successScreen = document.getElementById('success-screen');
     successScreen.style.display = 'block';
     document.getElementById('success-name').textContent = "You're live, " + firstName + "!";
-    const tipUrl = 'swiftpay.tips/tip/' + username;
+    const tipUrl = 'swiftpay.tips/tip?user=' + username;
     document.getElementById('tip-link-display').textContent = tipUrl;
     window._tipUsername = username;
     window._tipFirstName = firstName;
@@ -162,7 +162,7 @@ function handleSignup() {
 }
 
 function copyLink() {
-  const link = 'https://swiftpay.tips/tip/' + window._tipUsername;
+  const link = 'https://swiftpay.tips/tip?user=' + window._tipUsername;
   navigator.clipboard.writeText(link).then(() => {
     const btn = document.querySelector('.copy-btn');
     btn.textContent = '✓ Copied!';
@@ -171,7 +171,7 @@ function copyLink() {
 }
 
 function viewTipPage() {
-  window.location.href = '/tip/' + window._tipUsername + '?name=' + encodeURIComponent(window._tipFirstName) + '&role=' + encodeURIComponent(window._tipRole);
+  window.location.href = '/tip?name=' + encodeURIComponent(window._tipFirstName) + '&role=' + encodeURIComponent(window._tipRole) + '&user=' + encodeURIComponent(window._tipUsername);
 }
 </script>
 </body>
