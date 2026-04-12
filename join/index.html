@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SwiftPay — Start Getting Tipped Instantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #1D9E75; --green-dark: #085041; --green-mid: #0F6E56;
+  --green-light: #E1F5EE; --ink: #0E1513; --ink-mid: #1a2420;
+  --white: #FFFFFF; --muted: rgba(255,255,255,0.5);
+}
+body { font-family: 'Instrument Sans', sans-serif; background: var(--ink); color: var(--white); min-height: 100vh; overflow-x: hidden; }
+nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+.nav-logo span { color: var(--green); }
+.nav-back { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-back:hover { color: white; }
+.hero { text-align: center; padding: 3rem 1.5rem 2rem; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(29,158,117,0.15); border: 1px solid rgba(29,158,117,0.3); color: #5DCAA5; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 40px; margin-bottom: 1.25rem; }
+.hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1rem; }
+h1 em { font-style: normal; color: var(--green); }
+.hero-sub { font-size: 15px; color: var(--muted); font-weight: 300; margin-bottom: 2rem; line-height: 1.6; max-width: 440px; margin-left: auto; margin-right: auto; }
+.form-wrap { max-width: 480px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+.form-card { background: var(--ink-mid); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2rem; }
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.field input, .field select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 13px 16px; font-family: 'Instrument Sans', sans-serif; font-size: 14px; color: white; outline: none; transition: border-color 0.2s; appearance: none; }
+.field input::placeholder { color: rgba(255,255,255,0.25); }
+.field input:focus, .field select:focus { border-color: var(--green); }
+.field select option { background: #1a2420; color: white; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.submit-btn { width: 100%; background: var(--green); color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; padding: 15px; border-radius: 12px; border: none; cursor: pointer; letter-spacing: 0.02em; transition: all 0.2s; margin-top: 0.5rem; }
+.submit-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.trust-row { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.25rem; flex-wrap: wrap; }
+.trust-item { font-size: 11px; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 5px; }
+.trust-item::before { content: '✓'; color: var(--green); font-weight: 700; }
+.success-screen { display: none; text-align: center; padding: 2rem; }
+.success-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(29,158,117,0.15); border: 2px solid var(--green); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 28px; }
+.success-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.success-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+.tip-link-box { background: rgba(29,158,117,0.1); border: 1px solid rgba(29,158,117,0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 1.25rem; }
+.tip-link-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.tip-link-url { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--green); word-break: break-all; }
+.copy-btn { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: white; font-family: 'Instrument Sans', sans-serif; font-size: 13px; padding: 11px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+.copy-btn:hover { background: rgba(255,255,255,0.05); }
+.view-btn { width: 100%; background: var(--green); border: none; color: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 13px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+.view-btn:hover { background: var(--green-mid); }
+.bg-glow { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(29,158,117,0.12) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.form-wrap, .hero { position: relative; z-index: 1; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.form-card { animation: fadeUp 0.5s 0.1s ease both; }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<nav>
+  <div class="nav-logo">Swift<span>Pay</span></div>
+  <a href="/" class="nav-back">← Back to home</a>
+</nav>
+<div class="hero">
+  <div class="hero-tag">Free to join · 3 minutes</div>
+  <h1>Get your<br><em>tip link</em> today</h1>
+  <p class="hero-sub">Sign up free and get a personal QR code customers can use to tip you instantly — no app needed on their end.</p>
+</div>
+<div class="form-wrap">
+  <div class="form-card">
+    <div id="signup-form">
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" id="firstName" placeholder="Marcus" />
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" id="lastName" placeholder="Thompson" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="email" placeholder="you@email.com" />
+      </div>
+      <div class="field">
+        <label>Phone number</label>
+        <input type="tel" id="phone" placeholder="+1 (555) 000-0000" />
+      </div>
+      <div class="field">
+        <label>I work as a...</label>
+        <select id="role">
+          <option value="" disabled selected>Choose your role</option>
+          <option value="server">Server / Waiter / Waitress</option>
+          <option value="caddy">Caddy</option>
+          <option value="valet">Valet Attendant</option>
+          <option value="gig">Gig Worker (DoorDash, Instacart, etc.)</option>
+          <option value="student">College Student</option>
+          <option value="immigrant">Immigrant Worker</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Create your tip username</label>
+        <input type="text" id="username" placeholder="marcus-t" oninput="formatUsername(this)" />
+      </div>
+      <button class="submit-btn" id="submitBtn" onclick="handleSignup()">Get my tip link →</button>
+      <div class="trust-row">
+        <div class="trust-item">Free forever</div>
+        <div class="trust-item">No SSN required</div>
+        <div class="trust-item">Instant payouts</div>
+        <div class="trust-item">Powered by Stripe</div>
+      </div>
+    </div>
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-title" id="success-name">You're live, Marcus!</div>
+      <div class="success-sub">Your personal tip page is ready. Share your link anywhere — customers tip you in 8 seconds, money hits your account instantly.</div>
+      <div class="tip-link-box">
+        <div class="tip-link-label">Your tip link</div>
+        <div class="tip-link-url" id="tip-link-display">swiftpay.tips/tip/marcus-t</div>
+      </div>
+      <button class="copy-btn" onclick="copyLink()">Copy my tip link</button>
+      <button class="view-btn" onclick="viewTipPage()">View my tip page →</button>
+    </div>
+  </div>
+</div>
+<script>
+function formatUsername(input) {
+  input.value = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/--+/g, '-');
+}
+
+function handleSignup() {
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const role = document.getElementById('role').value;
+  const username = document.getElementById('username').value.trim();
+
+  if (!firstName || !lastName || !email || !role || !username) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Setting up your page...';
+
+  setTimeout(() => {
+    document.getElementById('signup-form').style.display = 'none';
+    const successScreen = document.getElementById('success-screen');
+    successScreen.style.display = 'block';
+    document.getElementById('success-name').textContent = "You're live, " + firstName + "!";
+    const tipUrl = 'swiftpay.tips/tip/' + username;
+    document.getElementById('tip-link-display').textContent = tipUrl;
+    window._tipUsername = username;
+    window._tipFirstName = firstName;
+    window._tipRole = role;
+  }, 1500);
+}
+
+function copyLink() {
+  const link = 'https://swiftpay.tips/tip/' + window._tipUsername;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy my tip link', 2000);
+  });
+}
+
+function viewTipPage() {
+  window.location.href = '/tip/' + window._tipUsername + '?name=' + encodeURIComponent(window._tipFirstName) + '&role=' + encodeURIComponent(window._tipRole);
+}
+</script>
+</body>
+</html>
