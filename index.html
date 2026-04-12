@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SwiftPay — Instant Payouts for Every Worker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #1D9E75;
+  --green-dark: #085041;
+  --green-mid: #0F6E56;
+  --green-light: #E1F5EE;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --coral: #D85A30;
+  --coral-light: #FAECE7;
+  --blue: #378ADD;
+  --blue-light: #E6F1FB;
+  --purple: #7F77DD;
+  --purple-light: #EEEDFE;
+  --ink: #0E1513;
+  --ink-mid: #2C3330;
+  --ink-light: #5A6963;
+  --cream: #F7F5F0;
+  --white: #FFFFFF;
+  --border: rgba(14,21,19,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--ink);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 4rem;
+  background: rgba(14,21,19,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.nav-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; }
+.nav-logo span { color: var(--green); }
+.nav-links { display: flex; gap: 2.5rem; }
+.nav-links a { color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 400; text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: white; }
+.nav-cta { background: var(--green); color: white; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 9px 22px; border-radius: 40px; border: none; cursor: pointer; letter-spacing: 0.02em; transition: background 0.2s; text-decoration: none; }
+.nav-cta:hover { background: var(--green-mid); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 8rem 2rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(29,158,117,0.18) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(55,138,221,0.10) 0%, transparent 60%),
+              radial-gradient(ellipse 30% 30% at 80% 70%, rgba(239,159,39,0.08) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+}
+.hero-content { position: relative; z-index: 1; max-width: 820px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(29,158,117,0.15); border: 1px solid rgba(29,158,117,0.3);
+  color: #5DCAA5; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 16px; border-radius: 40px; margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+h1 {
+  font-family: 'Syne', sans-serif; font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 800; line-height: 1.0; letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+h1 em { font-style: normal; color: var(--green); }
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(255,255,255,0.55);
+  font-weight: 300; line-height: 1.7; max-width: 560px; margin: 0 auto 2.5rem;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-btns {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.btn-primary {
+  background: var(--green); color: white;
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  padding: 14px 32px; border-radius: 40px; border: none; cursor: pointer;
+  letter-spacing: 0.02em; transition: all 0.2s; text-decoration: none; display: inline-block;
+}
+.btn-primary:hover { background: var(--green-mid); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: white;
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600;
+  padding: 14px 32px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer; letter-spacing: 0.02em; transition: all 0.2s; text-decoration: none; display: inline-block;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-2px); }
+
+.hero-workers {
+  display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+  margin-top: 3.5rem;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.worker-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  padding: 8px 14px; border-radius: 40px; font-size: 13px; color: rgba(255,255,255,0.6);
+}
+.worker-pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* TICKER */
+.ticker { background: var(--green-dark); padding: 14px 0; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); }
+.ticker-inner { display: flex; gap: 0; animation: ticker 20s linear infinite; width: max-content; }
+.ticker-item { white-space: nowrap; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); padding: 0 3rem; display: flex; align-items: center; gap: 10px; }
+.ticker-item span { color: #5DCAA5; font-weight: 700; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* STATS */
+.stats-section { padding: 6rem 4rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: rgba(255,255,255,0.04); }
+.stat-block { padding: 3rem; text-align: center; background: var(--ink); }
+.stat-block:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.06); }
+.stat-num { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: var(--green); letter-spacing: -0.03em; }
+.stat-label { font-size: 14px; color: rgba(255,255,255,0.45); margin-top: 6px; font-weight: 300; }
+
+/* CATEGORIES */
+.categories { padding: 7rem 4rem; }
+.section-eyebrow { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); margin-bottom: 1rem; }
+.section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1rem; }
+.section-sub { font-size: 16px; color: rgba(255,255,255,0.45); font-weight: 300; margin-bottom: 3.5rem; max-width: 480px; line-height: 1.6; }
+.categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
+.cat-card {
+  background: var(--ink-mid); padding: 2.5rem 2rem;
+  transition: background 0.2s;
+  cursor: default;
+}
+.cat-card:hover { background: #1a2420; }
+.cat-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 1.25rem;
+}
+.cat-name { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.cat-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; font-weight: 300; }
+.cat-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-top: 1rem; }
+
+/* HOW IT WORKS */
+.how { padding: 7rem 4rem; background: rgba(255,255,255,0.015); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 4rem; }
+.step { position: relative; }
+.step-num {
+  font-family: 'Syne', sans-serif; font-size: 64px; font-weight: 800;
+  color: rgba(29,158,117,0.12); line-height: 1; margin-bottom: 1rem;
+}
+.step-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.step-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.7; font-weight: 300; }
+.step-connector {
+  position: absolute; top: 32px; right: -1rem; width: 2rem; height: 1px;
+  background: linear-gradient(90deg, rgba(29,158,117,0.3), transparent);
+}
+.step:last-child .step-connector { display: none; }
+
+/* DEMO CARD */
+.demo-section { padding: 7rem 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+.demo-text .section-sub { max-width: 400px; }
+.feature-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+.feature-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+.feature-list li::before { content: ''; width: 18px; height: 18px; border-radius: 50%; background: rgba(29,158,117,0.15); border: 1px solid var(--green); flex-shrink: 0; margin-top: 2px; background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='%231D9E75' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
+.phone-mockup {
+  background: #141f1c;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px;
+  padding: 2rem 1.5rem;
+  max-width: 300px;
+  margin: 0 auto;
+  position: relative;
+}
+.phone-notch { width: 80px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px; margin: 0 auto 2rem; }
+.phone-balance { text-align: center; margin-bottom: 1.5rem; }
+.phone-balance-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.phone-balance-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: white; }
+.phone-cashout { width: 100%; background: var(--green); color: white; border: none; border-radius: 12px; padding: 14px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 1.5rem; transition: background 0.2s; }
+.phone-cashout:hover { background: var(--green-mid); }
+.phone-tip-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 1.5rem; }
+.phone-tip-btn { padding: 10px 4px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: white; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.15s; }
+.phone-tip-btn:hover { background: var(--green); border-color: var(--green); }
+.phone-worker { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.phone-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.phone-wname { font-size: 13px; font-weight: 500; }
+.phone-wrole { font-size: 11px; color: rgba(255,255,255,0.4); }
+.phone-wamt { margin-left: auto; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--green); }
+
+/* PRICING */
+.pricing { padding: 7rem 4rem; text-align: center; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; text-align: left; }
+.price-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2.5rem; transition: border-color 0.2s; }
+.price-card:hover { border-color: rgba(29,158,117,0.4); }
+.price-card.featured { background: rgba(29,158,117,0.08); border-color: rgba(29,158,117,0.35); position: relative; }
+.featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--green); color: white; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; font-family: 'Syne', sans-serif; letter-spacing: 0.05em; }
+.price-tier { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.price-amount { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.25rem; }
+.price-period { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 2rem; }
+.price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
+.price-features li { font-size: 13px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 8px; }
+.price-features li::before { content: '—'; color: var(--green); font-weight: 700; }
+.price-btn { width: 100%; padding: 13px; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+.price-btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2) !important; color: white; }
+.price-btn-outline:hover { border-color: rgba(255,255,255,0.5) !important; }
+.price-btn-solid { background: var(--green); color: white; }
+.price-btn-solid:hover { background: var(--green-mid); }
+
+/* FOOTER */
+footer { padding: 4rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+.footer-logo span { color: var(--green); }
+.footer-links { display: flex; gap: 2rem; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: white; }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+
+/* CTA SECTION */
+.cta-section {
+  padding: 7rem 4rem; text-align: center;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(29,158,117,0.12) 0%, transparent 70%);
+}
+.cta-section h2 { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1.5rem; line-height: 1.05; }
+.cta-section h2 em { font-style: normal; color: var(--green); }
+.cta-section p { font-size: 16px; color: rgba(255,255,255,0.45); margin-bottom: 2.5rem; font-weight: 300; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SCROLL REVEAL */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { display: none; }
+  .stats-section { grid-template-columns: 1fr; }
+  .stat-block:not(:last-child) { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .categories-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .demo-section { grid-template-columns: 1fr; gap: 3rem; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .categories, .how, .demo-section, .pricing, .cta-section { padding: 5rem 1.5rem; }
+  footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 3rem 1.5rem; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Swift<span>Pay</span></div>
+  <div class="nav-links">
+    <a href="#workers">Workers</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+  </div>
+  <a href="/join" class="nav-cta">Get started free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Instant payouts · Zero friction</div>
+    <h1>Every worker<br>gets paid <em>instantly</em></h1>
+    <p class="hero-sub">Tips, wages, and gig payouts delivered in seconds. Built for servers, caddies, valet, immigrants, students, and every gig worker in between.</p>
+    <div class="hero-btns">
+      <a href="/join" class="btn-primary">Start accepting tips</a>
+      <a href="#how" class="btn-outline">See how it works</a>
+    </div>
+    <div class="hero-workers">
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#5DCAA5"></div> Gig Workers</div>
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#FAC775"></div> Servers & Waitstaff</div>
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#85B7EB"></div> Caddies</div>
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#F09595"></div> Valet</div>
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#AFA9EC"></div> College Students</div>
+      <div class="worker-pill"><div class="worker-pill-dot" style="background:#97C459"></div> Immigrants</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item">Imagine: Marcus gets tipped <span>instantly</span> after every delivery</div>
+    <div class="ticker-item">Imagine: Sofia scanned, tipped <span>in 8 seconds</span> — no app needed</div>
+    <div class="ticker-item">Imagine: Kwame cashes out <span>after every round</span> — not on Friday</div>
+    <div class="ticker-item">Imagine: Daniela gets tipped <span>contactlessly</span> at valet pickup</div>
+    <div class="ticker-item">Imagine: Jin gets paid <span>the moment</span> tutoring ends</div>
+    <div class="ticker-item">Imagine: Priya receives tips <span>no SSN required</span></div>
+    <div class="ticker-item">This is what we're building — <span>join the waitlist</span></div>
+    <div class="ticker-item">Imagine: Marcus gets tipped <span>instantly</span> after every delivery</div>
+    <div class="ticker-item">Imagine: Sofia scanned, tipped <span>in 8 seconds</span> — no app needed</div>
+    <div class="ticker-item">Imagine: Kwame cashes out <span>after every round</span> — not on Friday</div>
+    <div class="ticker-item">Imagine: Daniela gets tipped <span>contactlessly</span> at valet pickup</div>
+    <div class="ticker-item">Imagine: Jin gets paid <span>the moment</span> tutoring ends</div>
+    <div class="ticker-item">Imagine: Priya receives tips <span>no SSN required</span></div>
+    <div class="ticker-item">This is what we're building — <span>join the waitlist</span></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section reveal">
+  <div class="stat-block">
+    <div class="stat-num">78M</div>
+    <div class="stat-label">Gig & service workers in the US</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num">$38B</div>
+    <div class="stat-label">Lost in uncollected tips yearly</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num">Day 1</div>
+    <div class="stat-label">We just launched — be first</div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="workers">
+  <div class="section-eyebrow reveal">Who it's for</div>
+  <h2 class="section-title reveal">Built for the people<br>who keep things running</h2>
+  <p class="section-sub reveal">No bank account required. No waiting for Friday payroll. Just instant money when the work is done.</p>
+  <div class="categories-grid reveal">
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(55,138,221,0.12)">🛵</div>
+      <div class="cat-name">Gig Workers</div>
+      <div class="cat-desc">DoorDash, Instacart, Uber — earn tips and bonuses instantly after every delivery, no waiting 7 days.</div>
+      <div class="cat-badge" style="background:var(--blue-light);color:#185FA5">Delivery · Rideshare · Freelance</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(239,159,39,0.12)">🍽️</div>
+      <div class="cat-name">Servers & Waitstaff</div>
+      <div class="cat-desc">Digital tip pooling, instant splits, and cashout to any debit card. No more waiting for the restaurant to cut a check.</div>
+      <div class="cat-badge" style="background:var(--amber-light);color:#854F0B">Restaurants · Banquets · Bars</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(29,158,117,0.12)">⛳</div>
+      <div class="cat-name">Caddies</div>
+      <div class="cat-desc">QR tips on the course, split tips between your team, and instant bank transfer after every round.</div>
+      <div class="cat-badge" style="background:var(--green-light);color:#0F6E56">Golf Clubs · Resorts · Private Courses</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(216,90,48,0.12)">🚗</div>
+      <div class="cat-name">Valet Attendants</div>
+      <div class="cat-desc">Tap-to-tip NFC stands at the pickup zone. Works with any phone. Tips pooled and split automatically.</div>
+      <div class="cat-badge" style="background:var(--coral-light);color:#993C1D">Hotels · Restaurants · Events</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(127,119,221,0.12)">🎓</div>
+      <div class="cat-name">College Students</div>
+      <div class="cat-desc">Tutors, campus workers, and side hustlers — get paid on your schedule with no minimum balance or fees.</div>
+      <div class="cat-badge" style="background:var(--purple-light);color:#534AB7">Tutoring · Campus Jobs · Freelance</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-icon" style="background:rgba(97,196,89,0.12)">🌍</div>
+      <div class="cat-name">Immigrant Workers</div>
+      <div class="cat-desc">No SSN required to sign up. Multi-currency support. Send earnings home internationally with low fees.</div>
+      <div class="cat-badge" style="background:#EAF3DE;color:#3B6D11">ITIN Accepted · Multi-currency · Remittance</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-eyebrow reveal">Process</div>
+  <h2 class="section-title reveal">Four steps.<br>That's it.</h2>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Create your profile</div>
+      <div class="step-desc">Sign up in 60 seconds. No bank account required to get started — just your name and phone number.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">02</div>
+      <div class="step-title">Share your QR or link</div>
+      <div class="step-desc">Get a personal QR code and payment link. Print it, display it, or tap-to-pay with NFC at your station.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">03</div>
+      <div class="step-title">Customers tip instantly</div>
+      <div class="step-desc">No app download needed on their end. They scan, choose an amount, and pay with Apple Pay, card, or Venmo.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">04</div>
+      <div class="step-title">Cash out in seconds</div>
+      <div class="step-desc">Transfer to any debit card, bank, or digital wallet — including international accounts — in under 3 seconds.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-section">
+  <div class="demo-text reveal">
+    <div class="section-eyebrow">The app</div>
+    <h2 class="section-title">Your earnings,<br>your control</h2>
+    <p class="section-sub">A beautifully simple dashboard to track every tip, shift payout, and transfer in real time.</p>
+    <ul class="feature-list">
+      <li>Real-time tip notifications the moment someone pays</li>
+      <li>Shift summaries and weekly earnings reports</li>
+      <li>Instant cashout to bank, debit, or international account</li>
+      <li>Tax-ready export for 1099 and freelance filings</li>
+      <li>Team tip splitting with one tap</li>
+      <li>Multi-language support — 18 languages including Spanish, Tagalog, Hindi</li>
+    </ul>
+  </div>
+  <div class="reveal">
+    <div class="phone-mockup">
+      <div class="phone-notch"></div>
+      <div class="phone-balance">
+        <div class="phone-balance-label">Today's earnings</div>
+        <div class="phone-balance-val" id="balance">$214.50</div>
+      </div>
+      <button class="phone-cashout" onclick="handleCashout()">Cash out now →</button>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:8px;margin-top:-4px;text-align:center;">Send a tip</div>
+      <div class="phone-tip-row">
+        <div class="phone-tip-btn" onclick="addTip(5)">$5</div>
+        <div class="phone-tip-btn" onclick="addTip(10)">$10</div>
+        <div class="phone-tip-btn" onclick="addTip(20)">$20</div>
+        <div class="phone-tip-btn" onclick="addTip(50)">$50</div>
+      </div>
+      <div class="phone-worker">
+        <div class="phone-avatar" style="background:#9FE1CB;color:#085041">KA</div>
+        <div><div class="phone-wname">Kwame A.</div><div class="phone-wrole">Caddy · Hole 9</div></div>
+        <div class="phone-wamt">+$110</div>
+      </div>
+      <div class="phone-worker">
+        <div class="phone-avatar" style="background:#FAC775;color:#633806">SR</div>
+        <div><div class="phone-wname">Sofia R.</div><div class="phone-wrole">Server · Table 14</div></div>
+        <div class="phone-wamt">+$64</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-eyebrow reveal">Pricing</div>
+  <h2 class="section-title reveal">Simple, honest pricing</h2>
+  <p class="section-sub reveal" style="margin:0 auto 0;">No hidden fees. No monthly minimums. Workers keep more of what they earn.</p>
+  <div class="pricing-grid reveal">
+    <div class="price-card">
+      <div class="price-tier">Individual</div>
+      <div class="price-amount">Free</div>
+      <div class="price-period">forever</div>
+      <ul class="price-features">
+        <li>Personal QR code & tip link</li>
+        <li>Instant cashout (1% fee)</li>
+        <li>Up to 50 tips/month</li>
+        <li>Mobile app access</li>
+        <li>Bank & debit transfers</li>
+      </ul>
+      <button class="price-btn price-btn-outline">Get started free</button>
+    </div>
+    <div class="price-card featured">
+      <div class="featured-badge">MOST POPULAR</div>
+      <div class="price-tier">Pro Worker</div>
+      <div class="price-amount" style="color:var(--green)">$4</div>
+      <div class="price-period">per month</div>
+      <ul class="price-features">
+        <li>Unlimited tips & payouts</li>
+        <li>Zero cashout fees</li>
+        <li>International transfers</li>
+        <li>Tax export & 1099 help</li>
+        <li>Team tip splitting</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="price-btn price-btn-solid">Start 30-day free trial</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Business</div>
+      <div class="price-amount">$29</div>
+      <div class="price-period">per month</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Up to 50 worker accounts</li>
+        <li>Venue QR management</li>
+        <li>Payroll integration</li>
+        <li>Analytics dashboard</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <button class="price-btn price-btn-outline">Contact sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="about">
+  <h2 class="reveal">Ready to get paid<br><em>the right way?</em></h2>
+  <p class="reveal">Join 127,000+ workers already on SwiftPay. Set up in 60 seconds.</p>
+  <div class="hero-btns reveal">
+    <a href="/join" class="btn-primary">Create your free account</a>
+    <a href="/join" class="btn-outline">Talk to us</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Swift<span>Pay</span></div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Support</a>
+    <a href="#">Blog</a>
+    <a href="#">Careers</a>
+  </div>
+  <div class="footer-copy">© 2025 SwiftPay Inc. All rights reserved.</div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Balance interaction
+let bal = 214.50;
+function addTip(amt) {
+  bal += amt;
+  document.getElementById('balance').textContent = '$' + bal.toFixed(2);
+}
+function handleCashout() {
+  const el = document.getElementById('balance');
+  el.textContent = 'Sending...';
+  setTimeout(() => {
+    bal = 0;
+    el.textContent = '$0.00 ✓';
+    setTimeout(() => { bal = 214.50; el.textContent = '$214.50'; }, 2000);
+  }, 900);
+}
+</script>
+</body>
+</html>
