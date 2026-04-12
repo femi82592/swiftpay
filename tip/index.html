@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tip via SwiftPay</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -134,12 +134,14 @@ function init() {
   document.getElementById('worker-name').textContent = name;
   document.getElementById('worker-role').textContent = roleLabels[role] || role;
   document.title = 'Tip ' + firstName + ' via SwiftPay';
-  const tipUrl = window.location.origin + '/tip?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role) + '&user=' + encodeURIComponent(username);
-  new QRCode(document.getElementById('qrcode'), {
-    text: tipUrl, width: 160, height: 160,
-    colorDark: '#0E1513', colorLight: '#FFFFFF',
-    correctLevel: QRCode.CorrectLevel.H
-  });
+  const tipUrl = 'https://swiftpay.tips/tip?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role) + '&user=' + encodeURIComponent(username);
+  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(tipUrl);
+  const qrImg = document.createElement('img');
+  qrImg.src = qrApiUrl;
+  qrImg.width = 160;
+  qrImg.height = 160;
+  qrImg.alt = 'Scan to tip ' + firstName;
+  document.getElementById('qrcode').appendChild(qrImg);
 }
 
 function selectTip(amt, btn) {
