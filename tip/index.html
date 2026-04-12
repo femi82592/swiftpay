@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tip via SwiftPay</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #1D9E75; --green-dark: #085041; --green-mid: #0F6E56;
+  --ink: #0E1513; --ink-mid: #1a2420; --white: #FFFFFF;
+  --muted: rgba(255,255,255,0.5);
+}
+body { font-family: 'Instrument Sans', sans-serif; background: var(--ink); color: var(--white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 0 3rem; }
+.bg-glow { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 500px; height: 400px; background: radial-gradient(ellipse, rgba(29,158,117,0.15) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.page { position: relative; z-index: 1; width: 100%; max-width: 420px; padding: 0 1.5rem; }
+.top-bar { display: flex; justify-content: center; padding: 1.25rem 0; }
+.logo { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; }
+.logo span { color: var(--green); }
+.profile-section { text-align: center; padding: 1.5rem 0 1.25rem; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #085041, #1D9E75); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: white; margin: 0 auto 1rem; border: 3px solid rgba(29,158,117,0.4); }
+.worker-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.02em; }
+.worker-role { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.worker-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(29,158,117,0.12); border: 1px solid rgba(29,158,117,0.25); color: #5DCAA5; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+.worker-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.tip-card { background: var(--ink-mid); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 1.5rem; margin-bottom: 12px; }
+.section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 12px; }
+.tip-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.tip-btn { padding: 12px 4px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.15s; }
+.tip-btn:hover, .tip-btn.selected { background: var(--green); border-color: var(--green); transform: scale(1.03); }
+.custom-row { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0 12px; transition: border-color 0.2s; }
+.custom-row:focus-within { border-color: var(--green); }
+.custom-prefix { font-size: 16px; color: rgba(255,255,255,0.4); font-weight: 500; padding-right: 6px; }
+.custom-input { flex: 1; background: transparent; border: none; font-family: 'Instrument Sans', sans-serif; font-size: 15px; color: white; padding: 12px 0; outline: none; }
+.custom-input::placeholder { color: rgba(255,255,255,0.2); }
+.selected-display { text-align: center; margin: 12px 0 0; font-size: 13px; color: rgba(255,255,255,0.4); min-height: 18px; }
+.selected-display span { color: var(--green); font-weight: 500; }
+.pay-btn { width: 100%; background: var(--green); color: white; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; padding: 16px; border-radius: 12px; border: none; cursor: pointer; letter-spacing: 0.02em; transition: all 0.2s; margin-top: 1rem; }
+.pay-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+.pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.qr-card { background: var(--ink-mid); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 1.5rem; text-align: center; margin-bottom: 12px; }
+.qr-wrap { background: white; border-radius: 12px; padding: 16px; display: inline-block; margin: 12px 0; }
+.qr-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.share-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); color: white; font-family: 'Instrument Sans', sans-serif; font-size: 13px; padding: 11px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.share-btn:hover { background: rgba(255,255,255,0.05); }
+.powered { text-align: center; font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 1.5rem; }
+.powered a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.success-overlay { display: none; position: fixed; inset: 0; background: rgba(8,80,65,0.97); z-index: 100; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 2rem; }
+.success-overlay.show { display: flex; }
+.success-check { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 1.5rem; animation: pop 0.4s ease both; }
+@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+.success-amount { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; margin-bottom: 6px; }
+.success-msg { font-size: 16px; opacity: 0.8; margin-bottom: 2rem; }
+.success-close { background: white; color: var(--green-dark); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 14px 32px; border-radius: 40px; border: none; cursor: pointer; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.tip-card { animation: fadeUp 0.4s 0.1s ease both; }
+.qr-card { animation: fadeUp 0.4s 0.2s ease both; }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<div class="page">
+  <div class="top-bar">
+    <div class="logo">Swift<span>Pay</span></div>
+  </div>
+
+  <div class="profile-section">
+    <div class="avatar" id="worker-avatar">MT</div>
+    <div class="worker-name" id="worker-name">Marcus T.</div>
+    <div class="worker-role" id="worker-role">Gig Worker</div>
+    <div class="worker-badge">Verified worker</div>
+  </div>
+
+  <div class="tip-card">
+    <div class="section-label">Choose a tip amount</div>
+    <div class="tip-amounts">
+      <div class="tip-btn" onclick="selectTip(5, this)">$5</div>
+      <div class="tip-btn" onclick="selectTip(10, this)">$10</div>
+      <div class="tip-btn" onclick="selectTip(20, this)">$20</div>
+      <div class="tip-btn" onclick="selectTip(50, this)">$50</div>
+    </div>
+    <div class="custom-row">
+      <div class="custom-prefix">$</div>
+      <input class="custom-input" id="custom-amt" type="number" placeholder="Custom amount" min="1" oninput="handleCustom(this)" />
+    </div>
+    <div class="selected-display" id="selected-display">Select an amount above</div>
+    <button class="pay-btn" id="pay-btn" onclick="handlePay()" disabled>Send tip</button>
+  </div>
+
+  <div class="qr-card">
+    <div class="section-label">Or scan to tip</div>
+    <div class="qr-wrap">
+      <div id="qrcode"></div>
+    </div>
+    <div class="qr-label">Scan with any phone camera</div>
+    <button class="share-btn" onclick="shareLink()">Share my tip link</button>
+  </div>
+
+  <div class="powered">Payments secured by <a href="https://stripe.com" target="_blank">Stripe</a> · <a href="https://swiftpay.tips">SwiftPay</a></div>
+</div>
+
+<div class="success-overlay" id="success-overlay">
+  <div class="success-check">✓</div>
+  <div class="success-amount" id="success-amount">$20</div>
+  <div class="success-msg" id="success-msg">Tip sent to Marcus T. — instantly</div>
+  <button class="success-close" onclick="closeSuccess()">Done</button>
+</div>
+
+<script>
+let selectedAmount = 0;
+
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  const pathParts = window.location.pathname.split('/');
+  const username = pathParts[pathParts.length - 1] || 'worker';
+  const name = params.get('name') || 'Marcus T.';
+  const role = params.get('role') || 'gig';
+  return { username, name, role };
+}
+
+const roleLabels = {
+  server: 'Server / Waiter', caddy: 'Caddy', valet: 'Valet Attendant',
+  gig: 'Gig Worker', student: 'College Student', immigrant: 'Immigrant Worker', other: 'Worker'
+};
+
+function init() {
+  const { username, name, role } = getParams();
+  const firstName = name.split(' ')[0];
+  const initials = name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('worker-avatar').textContent = initials;
+  document.getElementById('worker-name').textContent = name;
+  document.getElementById('worker-role').textContent = roleLabels[role] || role;
+  document.title = 'Tip ' + firstName + ' via SwiftPay';
+  const tipUrl = window.location.origin + '/tip/' + username + '?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role);
+  new QRCode(document.getElementById('qrcode'), {
+    text: tipUrl, width: 160, height: 160,
+    colorDark: '#0E1513', colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+function selectTip(amt, btn) {
+  selectedAmount = amt;
+  document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('custom-amt').value = '';
+  updateDisplay();
+}
+
+function handleCustom(input) {
+  const val = parseFloat(input.value);
+  selectedAmount = val > 0 ? val : 0;
+  document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const display = document.getElementById('selected-display');
+  const btn = document.getElementById('pay-btn');
+  if (selectedAmount > 0) {
+    display.innerHTML = 'Sending <span>$' + selectedAmount.toFixed(2) + '</span>';
+    btn.textContent = 'Send $' + selectedAmount.toFixed(2) + ' tip →';
+    btn.disabled = false;
+  } else {
+    display.textContent = 'Select an amount above';
+    btn.textContent = 'Send tip';
+    btn.disabled = true;
+  }
+}
+
+function handlePay() {
+  const btn = document.getElementById('pay-btn');
+  btn.textContent = 'Processing...';
+  btn.disabled = true;
+  setTimeout(() => {
+    const { name } = getParams();
+    const firstName = name.split(' ')[0];
+    document.getElementById('success-amount').textContent = '$' + selectedAmount.toFixed(2);
+    document.getElementById('success-msg').textContent = 'Tip sent to ' + firstName + ' — instantly';
+    document.getElementById('success-overlay').classList.add('show');
+    btn.textContent = 'Send $' + selectedAmount.toFixed(2) + ' tip →';
+    btn.disabled = false;
+    selectedAmount = 0;
+    document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('custom-amt').value = '';
+    updateDisplay();
+  }, 1200);
+}
+
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('show');
+}
+
+function shareLink() {
+  const { username, name, role } = getParams();
+  const url = window.location.origin + '/tip/' + username + '?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role);
+  if (navigator.share) {
+    navigator.share({ title: 'Tip me via SwiftPay', text: 'Tip me instantly — no app needed!', url });
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector('.share-btn');
+      btn.textContent = '✓ Link copied!';
+      setTimeout(() => btn.textContent = 'Share my tip link', 2000);
+    });
+  }
+}
+
+init();
+</script>
+</body>
+</html>
