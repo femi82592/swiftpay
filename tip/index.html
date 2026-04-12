@@ -134,7 +134,7 @@ function init() {
   document.getElementById('worker-name').textContent = name;
   document.getElementById('worker-role').textContent = roleLabels[role] || role;
   document.title = 'Tip ' + firstName + ' via SwiftPay';
-  const tipUrl = window.location.origin + '/tip/' + username + '?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role);
+  const tipUrl = window.location.origin + '/tip?name=' + encodeURIComponent(name) + '&role=' + encodeURIComponent(role) + '&user=' + encodeURIComponent(username);
   new QRCode(document.getElementById('qrcode'), {
     text: tipUrl, width: 160, height: 160,
     colorDark: '#0E1513', colorLight: '#FFFFFF',
